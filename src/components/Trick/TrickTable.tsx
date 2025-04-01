@@ -42,6 +42,7 @@ const TrickTable: React.FC<TrickTableProps> = ({
           <TableRow>
             <TableHead>Nome</TableHead>
             <TableHead>Tipo</TableHead>
+            <TableHead>Descrição</TableHead>
             <TableHead className="text-right">Pontos Base</TableHead>
             {isSelectable && <TableHead className="w-[50px]"></TableHead>}
           </TableRow>
@@ -55,6 +56,9 @@ const TrickTable: React.FC<TrickTableProps> = ({
             >
               <TableCell className="font-medium">{trick.name}</TableCell>
               <TableCell>{getTypeBadge(trick.type)}</TableCell>
+              <TableCell className="max-w-xs truncate">
+                {trick.description || <span className="text-muted-foreground italic">Sem descrição</span>}
+              </TableCell>
               <TableCell className="text-right">{trick.base_points}</TableCell>
               {isSelectable && (
                 <TableCell className="text-right">

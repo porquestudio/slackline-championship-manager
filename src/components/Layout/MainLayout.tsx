@@ -7,7 +7,8 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  X
+  X,
+  List
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabaseClient';
@@ -41,6 +42,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Campeonatos', path: '/championships', icon: Trophy },
+    { name: 'Manobras', path: '/tricks', icon: List },
     { name: 'Perfil', path: '/profile', icon: User }
   ];
 

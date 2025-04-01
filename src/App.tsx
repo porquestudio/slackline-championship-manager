@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Championship from "./pages/Championship";
+import Tricks from "./pages/Tricks";
 import NotFound from "./pages/NotFound";
 
 // Create a client
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/championships" element={<Dashboard />} /> {/* For now, redirects to dashboard */}
           <Route path="/championship/:id" element={<Championship />} />
+          <Route path="/tricks" element={<Tricks />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
