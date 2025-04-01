@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import MainLayout from '@/components/Layout/MainLayout';
@@ -6,15 +5,17 @@ import { supabase, Championship } from '@/lib/supabaseClient';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Trophy, Users, Calendar, PlusCircle, ArrowRight } from 'lucide-react';
+import { Trophy, Users, Calendar, PlusCircle, ArrowRight, Database } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { seedData } from '@/lib/seedData';
 
 const Dashboard = () => {
   const [championships, setChampionships] = useState<Championship[]>([]);
   const [recentChampionship, setRecentChampionship] = useState<Championship | null>(null);
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [seeding, setSeeding] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -23,14 +24,12 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
         throw new Error('Usuário não autenticado');
       }
       
-      // Get user profile
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -43,7 +42,6 @@ const Dashboard = () => {
       
       setUserProfile(profile);
       
-      // Get recent championships
       const { data: champData, error: champError } = await supabase
         .from('championships')
         .select('*')
@@ -85,6 +83,34 @@ const Dashboard = () => {
     }
   };
 
+  const handleSeedData = async () => {
+    setSeeding(true);
+    try {
+      const result = await seedData();
+      if (result.success) {
+        toast({
+          title: "Dados criados",
+          description: "Dados fictícios inseridos com sucesso!",
+        });
+        fetchDashboardData();
+      } else {
+        toast({
+          title: "Erro",
+          description: "Falha ao inserir dados fictícios",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Falha ao inserir dados fictícios",
+        variant: "destructive",
+      });
+    } finally {
+      setSeeding(false);
+    }
+  };
+
   return (
     <MainLayout>
       <div className="mb-6">
@@ -102,7 +128,6 @@ const Dashboard = () => {
         </div>
       ) : (
         <>
-          {/* Quick Stats */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
             <Card>
               <CardHeader className="pb-2">
@@ -151,18 +176,27 @@ const Dashboard = () => {
                   Ações Rápidas
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex gap-2">
+              <CardContent className="flex gap-2 flex-wrap">
                 <Link to="/championships/new">
                   <Button size="sm" className="gap-1">
                     <PlusCircle className="h-4 w-4" />
                     <span>Novo Campeonato</span>
                   </Button>
                 </Link>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="gap-1" 
+                  onClick={handleSeedData}
+                  disabled={seeding}
+                >
+                  <Database className="h-4 w-4" />
+                  <span>{seeding ? "Inserindo..." : "Inserir Dados Fictícios"}</span>
+                </Button>
               </CardContent>
             </Card>
           </div>
 
-          {/* Recent Championships */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Campeonatos Recentes</h2>
